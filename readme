@@ -1,0 +1,31 @@
+Solid Primitives for Automerge Repo
+===================================
+
+These hooks are provided as helpers for using Automerge in your Solid project.
+
+<RepoProvider repo={Repo}/>
+---------------------------
+Wrapper context required in Automerge Solid apps
+
+useRepo(): Repo
+---------------
+Get a direct reference to the current repo.
+
+useHandle<T>(() => AnyDocumentId): Handle
+------------------------------
+Get a handle from the repo.
+
+useDocument<T>(() => AnyDocumentId): [T, (fn: changeFn<T>) => void]
+-------------------------------------------------------------------
+Get a document and change function from the repo.
+
+createDocumentStore(() => Handle): [doc, (fn: changeFn<T>) => void]
+-------------------------------------------------------------------
+Create a naïve* deeply-reactive solid store wrapper for a handle
+
+useDocumentStore<T>(() => AnyDocumentId): [T, (fn: changeFn<T>) => void]
+------------------------------------------------------------------------
+Get a naïve* deeply-reactive solid store from the repo
+
+*naïve: this only supports simple docs made of simple pojo values. not rich text
+or conflicts.

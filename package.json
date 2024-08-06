@@ -1,0 +1,47 @@
+{
+	"name": "automerge-repo-solid-primitives",
+	"version": "1.0.0",
+	"description": "automerge-repo primitives for your solidjs app",
+	"type": "module",
+	"main": "output/index.js",
+	"scripts": {
+		"mk": "tsc --noEmit && vite build",
+		"test": "vitest run",
+		"w": "npm-watch build",
+		"viz": "VISUALIZE=true vite build"
+	},
+	"keywords": [
+		"solidjs",
+		"automerge"
+	],
+	"author": "chee <chee@rabbits.computer>",
+	"license": "MIT",
+	"devDependencies": {
+		"@automerge/automerge": "^2.2.8",
+		"@automerge/automerge-repo": "^1.2.1",
+		"@automerge/automerge-repo-network-broadcastchannel": "^1.2.1",
+		"@automerge/automerge-repo-network-websocket": "^1.2.1",
+		"@automerge/automerge-repo-storage-indexeddb": "^1.2.1",
+		"@solidjs/testing-library": "^0.8.9",
+		"@testing-library/jest-dom": "^6.4.8",
+		"@testing-library/user-event": "^14.5.2",
+		"eslint": "^9.8.0",
+		"eslint-plugin-solid": "^0.14.1",
+		"globals": "^15.9.0",
+		"jsdom": "^24.1.1",
+		"prettier": "^3.3.3",
+		"rollup-plugin-visualizer": "^5.12.0",
+		"solid-js": "^1.8.19",
+		"typescript": "^5.5.4",
+		"typescript-eslint": "^8.0.1",
+		"vite": "^5.3.5",
+		"vite-plugin-dts": "4.0.0-beta.2",
+		"vite-plugin-solid": "^2.10.2",
+		"vite-plugin-wasm": "^3.3.0",
+		"vitest": "^2.0.5"
+	},
+	"peerDependencies": {
+		"@automerge/automerge-repo": "^1.2.1",
+		"solid-js": "^1.8.19"
+	}
+}
