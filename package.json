@@ -12,6 +12,8 @@
 	},
 	"keywords": [
 		"solidjs",
+		"solid",
+		"solid-js",
 		"automerge"
 	],
 	"author": "chee <chee@rabbits.computer>",
@@ -43,5 +45,8 @@
 	"peerDependencies": {
 		"@automerge/automerge-repo": "^1.2.1",
 		"solid-js": "^1.8.19"
+	},
+	"dependencies": {
+		"cabbages": "^0.0.0"
 	}
 }

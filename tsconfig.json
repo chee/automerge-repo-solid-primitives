@@ -17,5 +17,10 @@
 		"isolatedModules": true,
 		"types": ["vite/client", "@testing-library/jest-dom"]
 	},
-	"include": ["src/**/*.ts", "test/**/*.tsx", "_workshop/**/*.tsx"]
+	"include": [
+		"src/**/*.ts",
+		"test/**/*.tsx",
+		"_workshop/**/*.tsx",
+		"test/document-store.test.tsx"
+	]
 }

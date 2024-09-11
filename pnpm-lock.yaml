@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      cabbages:
+        specifier: ^0.0.0
+        version: 0.0.0
     devDependencies:
       '@automerge/automerge':
         specifier: ^2.2.8
@@ -873,6 +877,9 @@ packages:
 
   bs58check@3.0.1:
     resolution: {integrity: sha512-hjuuJvoWEybo7Hn/0xOrczQKKEKD63WguEjlhLExYs2wUBcebDC1jDNK17eEAD2lYfw82d5ASC1d7K3SWszjaQ==}
+
+  cabbages@0.0.0:
+    resolution: {integrity: sha512-3h2j5Mr1x/LdDmyDK/skDWjpr2rjpJVfH638eN+glZkBWG5y2uWWMKhwlTuhohJ/4OdElE0Kb1eOnNWm1WsH2A==}
 
   cac@6.7.14:
     resolution: {integrity: sha512-b6Ilus+c3RrdDk+JhLKUAQfzzgLEPy6wcXqS7f/xe1EETvsDP6GORG7SFuOs6cID5YkqchW/LXZbX5bc8j7ZcQ==}
@@ -2960,6 +2967,8 @@ snapshots:
     dependencies:
       '@noble/hashes': 1.4.0
       bs58: 5.0.0
+
+  cabbages@0.0.0: {}
 
   cac@6.7.14: {}
 
