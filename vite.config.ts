@@ -21,7 +21,7 @@ export default defineConfig({
 		},
 		target: "esnext",
 		rollupOptions: {
-			external: ["solid-js"],
+			external: ["solid-js", "cabbages"],
 		},
 	},
 	worker: {
