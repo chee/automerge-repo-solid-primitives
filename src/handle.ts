@@ -20,6 +20,7 @@ export function useHandle<T>(
 			return
 		}
 		let handle = repo.find<T>(id)
+
 		if (handle.isReady()) {
 			return handle
 		}

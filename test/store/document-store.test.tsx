@@ -178,8 +178,10 @@ describe("createDocumentStore", () => {
 		const {result: doc, owner} = renderHook(createDocumentStore, {
 			initialProps: [() => handle],
 		})
-		createEffect(() => {
-			fn(doc()?.projects[1].title)
+		testEffect(() => {
+			createEffect(() => {
+				fn(doc()?.projects[1].title)
+			})
 		})
 		const arrayDotThree = testEffect(done => {
 			createEffect((run: number = 0) => {

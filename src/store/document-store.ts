@@ -1,17 +1,11 @@
-import {
-	createResource,
-	getOwner,
-	onCleanup,
-	onMount,
-	runWithOwner,
-} from "solid-js"
+import {createResource, getOwner, onCleanup, runWithOwner} from "solid-js"
 import type {
 	ChangeFn,
 	Doc,
 	DocHandle,
 	DocHandleChangePayload,
 } from "@automerge/automerge-repo"
-import type {Accessor, ResourceOptions, Setter} from "solid-js"
+import type {Accessor, ResourceOptions} from "solid-js"
 import {createStore, produce, type Store} from "solid-js/store"
 import type {Patch} from "@automerge/automerge"
 import {apply, fromAutomerge} from "cabbages"
