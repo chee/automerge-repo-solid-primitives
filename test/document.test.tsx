@@ -5,7 +5,7 @@ import {useDocument} from "../src/document.ts"
 import {RepoContext} from "../src/repo.ts"
 import {createEffect, createSignal, on, type ParentComponent} from "solid-js"
 
-const SLOW_DOC_LOAD_TIME_MS = 10
+const SLOW_DOC_LOAD_TIME_MS = 1
 
 describe("useDocument", () => {
 	function setup() {
@@ -19,10 +19,6 @@ describe("useDocument", () => {
 		const handleB = repo.create<ExampleDoc>()
 		handleB.change(doc => (doc.foo = "B"))
 
-		// A doc that takes 10ms to load, to simulate a slow load.
-		// The time value isn't totally arbitrary; 1ms can cause flaky tests
-		// presumably because of interations with React's scheduler / batched
-		// renders, but 10ms seems safe empirically.
 		const handleSlow = repo.create<ExampleDoc>()
 		handleSlow.change(doc => (doc.foo = "slow"))
 		const oldDoc = handleSlow.doc.bind(handleSlow)
@@ -82,9 +78,6 @@ describe("useDocument", () => {
 		await waitFor(() => expect(onDoc).toHaveBeenLastCalledWith({foo: "A"}))
 	})
 
-	/*
-because we are using a resource, it'll always be undefined the first time
-
 	it("should immediately return a document if it has already been loaded", async () => {
 		const {handleA, wrapper} = setup()
 		const onDoc = vi.fn()
@@ -92,7 +85,6 @@ because we are using a resource, it'll always be undefined the first time
 		render(() => <Component url={handleA.url} onDoc={onDoc} />, {wrapper})
 		await waitFor(() => expect(onDoc).not.toHaveBeenCalledWith(undefined))
 	})
- */
 
 	it("should update if the doc changes", async () => {
 		const {wrapper, handleA} = setup()

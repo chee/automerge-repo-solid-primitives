@@ -15,13 +15,15 @@ export function useHandle<T>(
 ): Resource<DocHandle<T> | undefined> {
 	let repo = useRepo()
 
-	let [handle, {mutate}] = createResource(id, async id => {
+	let [handle, {mutate}] = createResource(id, id => {
 		if (!id) {
 			return
 		}
 		let handle = repo.find<T>(id)
-		await handle.whenReady()
-		return handle
+		if (handle.isReady()) {
+			return handle
+		}
+		return handle.whenReady().then(() => handle)
 	})
 
 	createEffect(
