@@ -1,5 +1,5 @@
 import {Repo} from "@automerge/automerge-repo/slim"
-import {createContext, useContext, type JSXElement} from "solid-js"
+import {createContext, useContext} from "solid-js"
 
 /**
  * A [context](https://docs.solidjs.com/concepts/context) that provides access

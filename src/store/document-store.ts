@@ -5,7 +5,7 @@ import type {
 	DocHandle,
 	DocHandleChangePayload,
 } from "@automerge/automerge-repo"
-import type {Accessor, ResourceOptions} from "solid-js"
+import type {Accessor} from "solid-js"
 import {createStore, produce, type Store} from "solid-js/store"
 import type {Patch} from "@automerge/automerge"
 import {apply, fromAutomerge} from "cabbages"
@@ -21,13 +21,8 @@ function autoproduce<T>(patches: Patch[]) {
 	})
 }
 
-export interface DocumentStoreOptions<T> {
-	storage?: ResourceOptions<Doc<T>, DocHandle<T>>["storage"]
-}
-
 export function createDocumentStore<T>(
-	handle: Accessor<DocHandle<T> | undefined>,
-	options?: DocumentStoreOptions<T>
+	handle: Accessor<DocHandle<T> | undefined>
 ) {
 	let owner = getOwner()
 
@@ -47,7 +42,6 @@ export function createDocumentStore<T>(
 		},
 		{
 			initialValue: handle()?.docSync(),
-			storage: options?.storage,
 		}
 	)
 

@@ -13,14 +13,10 @@ import {
 	on,
 	onCleanup,
 	type Resource,
-	type ResourceOptions,
 } from "solid-js"
 
 export function useDocument<T>(
-	id: () => AnyDocumentId | undefined,
-	options?: {
-		storage?: ResourceOptions<Doc<T>, DocHandle<T>>["storage"]
-	}
+	id: () => AnyDocumentId | undefined
 ): [
 	Resource<Doc<T> | undefined>,
 	(changeFn: ChangeFn<T>, options?: ChangeOptions<T> | undefined) => void,
@@ -31,7 +27,6 @@ export function useDocument<T>(
 		DocHandle<T>
 	>(handle, handle => handle.doc(), {
 		initialValue: handle()?.docSync(),
-		storage: options?.storage,
 	})
 
 	createEffect(
