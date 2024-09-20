@@ -14,14 +14,16 @@ import {
 	onCleanup,
 	type Resource,
 } from "solid-js"
+import type {BaseOptions} from "./types.ts"
 
 export function useDocument<T>(
-	id: () => AnyDocumentId | undefined
+	id: () => AnyDocumentId | undefined,
+	options?: BaseOptions
 ): [
 	Resource<Doc<T> | undefined>,
 	(changeFn: ChangeFn<T>, options?: ChangeOptions<T> | undefined) => void,
 ] {
-	let handle = useHandle<T>(id)
+	let handle = useHandle<T>(id, options)
 	let [doc, {refetch, mutate}] = createResource<
 		Doc<T | undefined>,
 		DocHandle<T>
@@ -40,8 +42,7 @@ export function useDocument<T>(
 		})
 	)
 
-	createEffect(on(handle, handle => handle || mutate()))
-	createEffect(on(id, id => id || mutate))
+	createEffect(on(id, id => id || mutate()))
 
 	return [
 		doc,

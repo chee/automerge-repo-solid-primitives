@@ -30,12 +30,12 @@ export function createDocumentStore<T>(
 		handle,
 		async handle => {
 			await handle.whenReady()
-
 			let [document, update] = createStore(handle.docSync() as Doc<T>)
 
 			function patch(payload: DocHandleChangePayload<T>) {
 				update(autoproduce(payload.patches))
 			}
+
 			handle.on("change", patch)
 			runWithOwner(owner, () => onCleanup(() => handle.off("change", patch)))
 			return document

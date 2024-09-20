@@ -3,7 +3,14 @@ import {render, waitFor} from "@solidjs/testing-library"
 import {describe, expect, it, vi} from "vitest"
 import {useDocument} from "../src/document.ts"
 import {RepoContext} from "../src/repo.ts"
-import {createEffect, createSignal, on, type ParentComponent} from "solid-js"
+import {
+	createEffect,
+	createSignal,
+	on,
+	untrack,
+	type ParentComponent,
+} from "solid-js"
+import type {BaseOptions} from "../src/types.ts"
 
 const SLOW_DOC_LOAD_TIME_MS = 1
 
@@ -60,8 +67,12 @@ describe("useDocument", () => {
 	const Component = (props: {
 		url: AutomergeUrl | undefined
 		onDoc: (doc: ExampleDoc) => void
+		options?: BaseOptions
 	}) => {
-		const [doc] = useDocument<ExampleDoc>(() => props.url)
+		const [doc] = useDocument<ExampleDoc>(
+			() => props.url,
+			untrack(() => props.options)
+		)
 		createEffect(
 			on([doc], ([doc]) => {
 				props.onDoc(doc!)
@@ -75,6 +86,28 @@ describe("useDocument", () => {
 		const onDoc = vi.fn()
 
 		render(() => <Component url={handleA.url} onDoc={onDoc} />, {wrapper})
+		await waitFor(() => expect(onDoc).toHaveBeenLastCalledWith({foo: "A"}))
+	})
+
+	it("throws if called without any kinda repo", async () => {
+		const {handleA} = setup()
+		const onDoc = vi.fn()
+
+		expect(() =>
+			render(() => <Component url={handleA.url} onDoc={onDoc} />, {})
+		).toThrowErrorMatchingInlineSnapshot(
+			`[Error: use outside <RepoContext> requires options.repo]`
+		)
+	})
+
+	it("works without a context if given a repo in options", async () => {
+		const {handleA, repo} = setup()
+		const onDoc = vi.fn()
+
+		render(
+			() => <Component url={handleA.url} onDoc={onDoc} options={{repo}} />,
+			{}
+		)
 		await waitFor(() => expect(onDoc).toHaveBeenLastCalledWith({foo: "A"}))
 	})
 

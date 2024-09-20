@@ -13,8 +13,10 @@ import {
 	createSignal,
 	on,
 	Suspense,
+	untrack,
 	type ParentComponent,
 } from "solid-js"
+import type {BaseOptions} from "../src/types.ts"
 
 interface ExampleDoc {
 	foo: string
@@ -52,8 +54,12 @@ describe("useHandle", () => {
 	const Component = (props: {
 		url: AutomergeUrl | undefined
 		onHandle: (handle: DocHandle<unknown> | undefined) => void
+		options?: BaseOptions
 	}) => {
-		const handle = useHandle(() => props.url)
+		const handle = useHandle(
+			() => props.url,
+			untrack(() => props.options)
+		)
 		createEffect(
 			on([handle], () => {
 				props.onHandle(handle())
@@ -74,6 +80,30 @@ describe("useHandle", () => {
 		render(() => <Component url={handleA.url} onHandle={onHandle} />, {
 			wrapper,
 		})
+		await waitFor(() => expect(onHandle).toHaveBeenLastCalledWith(handleA))
+	})
+
+	it("throws if called without any kinda repo", async () => {
+		const {handleA} = setup()
+		const onHandle = vi.fn()
+
+		expect(() =>
+			render(() => <Component url={handleA.url} onHandle={onHandle} />, {})
+		).toThrowErrorMatchingInlineSnapshot(
+			`[Error: use outside <RepoContext> requires options.repo]`
+		)
+	})
+
+	it("works without a context if given a repo in options", async () => {
+		const {handleA} = setup()
+		const onHandle = vi.fn()
+
+		render(
+			() => (
+				<Component url={handleA.url} onHandle={onHandle} options={{repo}} />
+			),
+			{}
+		)
 		await waitFor(() => expect(onHandle).toHaveBeenLastCalledWith(handleA))
 	})
 
@@ -109,9 +139,7 @@ describe("useHandle", () => {
 
 		// set url to doc B
 		updateURL(handleB.url)
-		await waitFor(() =>
-			expect(hookResult.result.latest?.url).toBe(handleB.url)
-		)
+		await waitFor(() => expect(hookResult.result.latest?.url).toBe(handleB.url))
 		await waitFor(() => expect(button).toHaveTextContent(handleB.url))
 
 		// set url to undefined
@@ -123,9 +151,7 @@ describe("useHandle", () => {
 	it("does not return undefined after the url is updated", async () => {
 		const {wrapper, handleA, handleB} = setup()
 		const onHandle = vi.fn()
-		const [url, updateURL] = createSignal<AutomergeUrl | undefined>(
-			handleA.url
-		)
+		const [url, updateURL] = createSignal<AutomergeUrl | undefined>(handleA.url)
 
 		render(() => <Component url={url()} onHandle={onHandle} />, {wrapper})
 		await waitFor(() => expect(onHandle).toHaveBeenLastCalledWith(handleA))
@@ -140,9 +166,7 @@ describe("useHandle", () => {
 	it("does not return a handle for a different url after the url is updated", async () => {
 		const {wrapper, handleA, handleB} = setup()
 		const onHandle = vi.fn()
-		const [url, updateURL] = createSignal<AutomergeUrl | undefined>(
-			handleA.url
-		)
+		const [url, updateURL] = createSignal<AutomergeUrl | undefined>(handleA.url)
 
 		render(() => <Component url={url()} onHandle={onHandle} />, {wrapper})
 		await waitFor(() => expect(onHandle).toHaveBeenLastCalledWith(handleA))
