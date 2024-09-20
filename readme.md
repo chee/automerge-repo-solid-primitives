@@ -1,26 +1,97 @@
 # Solid Primitives for Automerge Repo
 
-These hooks are provided as helpers for using Automerge in your SolidJS project.
+Helpers for using <a href="https://automerge.org/docs/repositories/">
+<img alt="" src=.assets/automerge.png width=22 height=22>
+Automerge
+</a> with <a href="https://www.solidjs.com/">
+<img alt="" src=.assets/solid.png width=22 height=22>
+SolidJS
+</a>.
 
-## `<RepoProvider repo={Repo}/>`
+## RepoContext
 
-Wrapper context required in Automerge-Repo Solid apps
+A convenience context for Automerge-Repo Solid apps. Optional: if you prefer you
+can pass a repo as an option to `useHandle` or `useDocument`.
 
-## `useRepo(): Repo`
+```tsx
+<RepoContext.Provider repo={Repo}>
+	<App />
+</RepoContext.Provider>
+```
 
-Get a the current repo from the context.
+## useRepo
 
-## `useHandle<T>(() => AnyDocumentId): Resource<Handle>`
+Get the repo from the [context](#repocontext).
 
-Get a handle from the repo.
+```ts
+useRepo(): Repo
+```
 
-## `useDocument<T>(() => AnyDocumentId): [Resource<T>, (fn: changeFn<T>) => void]`
+### e.g.
 
-Get a document and change function from the repo.
+```ts
+let repo = useRepo()
+```
 
-## `createDocumentStore<T>(() => Handle<T>): Resource<Doc<T>>`
+## useHandle
 
-Create a store for a handle's document. We subscribe to the handle's changes,
-and apply the incoming patches to the precise the fields of the store that have
-changed to provide fine-grained reactivity that's consistent across space and
-time.
+Get a [handle](https://automerge.org/docs/repositories/dochandles/) from the repo as a [resource](https://docs.solidjs.com/reference/basic-reactivity/create-resource).
+
+```ts
+useHandle<T>(
+    () => AnyDocumentId,
+    options?: {repo: Repo}
+): Resource<Handle<T>>
+```
+
+### e.g.
+
+```ts
+let handle = useHandle(id)
+// or
+let handle = useHandle(id, {repo})
+```
+
+The `repo` option can be left out if you are using [RepoContext](#repocontext).
+
+## useDocument
+
+Get a document and change function from the repo as a [resource](https://docs.solidjs.com/reference/basic-reactivity/create-resource).
+
+```ts
+useDocument<T>(
+    () => AnyDocumentId,
+    options?: {repo: Repo}
+): [Resource<T>, (fn: changeFn<T>) => void]
+```
+
+### e.g.
+
+```ts
+let [doc, change] = useDocument(id)
+// or
+let [doc, change] = useDocument(id, {repo})
+```
+
+The `repo` option can be left out if you are using [RepoContext](#repocontext).
+
+## createDocumentStore
+
+Create a store for a handle's document. It's subscribed to the handle's changes,
+and converts incoming automerge operations to store updates, providing
+fine-grained reactivity that's consistent across space and time.
+
+```ts
+createDocumentStore<T>(
+    () => Handle<T>
+): Resource<Doc<T>>
+```
+
+### e.g.
+
+```ts
+let handle = useHandle(id, {repo})
+let doc = createDocumentStore(handle)
+
+return <h1>{doc.items[1].title}</h1>
+```
