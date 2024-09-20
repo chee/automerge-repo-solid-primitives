@@ -31,13 +31,18 @@ export function useDocument<T>(
 		initialValue: handle()?.docSync(),
 	})
 
+	function ondelete() {
+		mutate()
+		refetch()
+	}
+
 	createEffect(
 		on(handle, handle => {
 			handle?.on("change", refetch)
-			handle?.on("delete", refetch)
+			handle?.on("delete", ondelete)
 			onCleanup(() => {
 				handle?.off("change", refetch)
-				handle?.off("delete", refetch)
+				handle?.off("delete", ondelete)
 			})
 		})
 	)
