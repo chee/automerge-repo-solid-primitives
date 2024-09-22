@@ -5,6 +5,7 @@
 	"type": "module",
 	"main": "output/index.js",
 	"scripts": {
+		"prepublish": "pnpm mk",
 		"mk": "tsc --noEmit && vite build",
 		"test": "vitest run",
 		"w": "npm-watch build",
