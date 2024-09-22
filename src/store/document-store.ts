@@ -12,7 +12,7 @@ import {apply, fromAutomerge} from "cabbages"
 
 export type DocumentStore<T> = [Store<Doc<T>>, (fn: ChangeFn<T>) => void]
 
-function autoproduce<T>(patches: Patch[]) {
+export function autoproduce<T>(patches: Patch[]) {
 	return produce<T>(doc => {
 		for (let patch of patches) {
 			const [path, range, val] = fromAutomerge(patch)
