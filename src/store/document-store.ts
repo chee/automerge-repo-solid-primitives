@@ -1,5 +1,12 @@
-import {createResource, getOwner, onCleanup, runWithOwner} from "solid-js"
+import {
+	createEffect,
+	createResource,
+	getOwner,
+	onCleanup,
+	runWithOwner,
+} from "solid-js"
 import type {
+	AnyDocumentId,
 	ChangeFn,
 	Doc,
 	DocHandle,
@@ -9,6 +16,8 @@ import type {Accessor} from "solid-js"
 import {createStore, produce, type Store} from "solid-js/store"
 import type {Patch} from "@automerge/automerge"
 import {apply, fromAutomerge} from "cabbages"
+import type {BaseOptions} from "../types.ts"
+import {useHandle} from "../handle.ts"
 
 export type DocumentStore<T> = [Store<Doc<T>>, (fn: ChangeFn<T>) => void]
 
@@ -46,4 +55,33 @@ export function createDocumentStore<T>(
 	)
 
 	return document
+}
+
+export function useDocumentStore<T>(
+	id: () => AnyDocumentId | undefined,
+	options?: BaseOptions
+) {
+	let handle = useHandle<T>(id, options)
+	let doc = createDocumentStore<T>(handle)
+	let queue: ChangeFn<T>[] = []
+	createEffect(() => {
+		if (handle()) {
+			let next
+			while ((next = queue.shift())) {
+				handle()?.change(next)
+			}
+		} else {
+			queue = []
+		}
+	})
+	return [
+		doc,
+		(fn: ChangeFn<T>) => {
+			if (handle()?.isReady) {
+				handle()!.change(fn)
+			} else {
+				queue.push(fn)
+			}
+		},
+	] as const
 }
