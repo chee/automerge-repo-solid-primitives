@@ -16,6 +16,9 @@ import {
 } from "solid-js"
 import type {BaseOptions} from "./types.ts"
 
+/**
+ * Get a {@link Doc} from an AutomergeURL.
+ */
 export function useDocument<T>(
 	id: () => AnyDocumentId | undefined,
 	options?: BaseOptions

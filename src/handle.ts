@@ -9,10 +9,8 @@ import {
 } from "solid-js"
 import type {BaseOptions} from "./types.ts"
 
-/** A hook which returns a {@link DocHandle} identified by a URL.
- *
- * @remarks
- * This requires a {@link RepoContext} to be provided by a parent component.
+/**
+ * Get a {@link DocHandle} from an AutomergeURL.
  */
 export function useHandle<T>(
 	id: () => AnyDocumentId | undefined,
