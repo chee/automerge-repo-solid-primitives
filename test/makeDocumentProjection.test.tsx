@@ -274,6 +274,45 @@ describe("makeDocumentProjection", () => {
 			clean()
 		}
 	})
+
+	it("reconciles from the new scoped value when scopeReplaced fires", async () => {
+		const {handle} = setup()
+		type Project = ExampleDoc["projects"][number]
+		// a sub-handle scoped to an object *inside* the document
+		const sub = handle.sub("projects", 0)
+		const {result: doc, owner} = renderHook(
+			makeDocumentProjection as (handle: DocHandle<Project>) => Project,
+			{initialProps: [sub]}
+		)
+
+		const done = testEffect(done => {
+			createEffect((run: number = 0) => {
+				if (run == 0) {
+					expect(doc.title).toBe("one")
+					// a change *inside* the scope: fine-grained, scopeReplaced false
+					handle.change(d => (d.projects[0].title = "ONE"))
+				} else if (run == 1) {
+					expect(doc.title).toBe("ONE")
+					// replace the scope *wholesale*: fires scopeReplaced, so the
+					// projection reconciles from payload.doc
+					handle.change(
+						d => (d.projects[0] = {title: "replaced", items: []})
+					)
+				} else if (run == 2) {
+					expect(doc.title).toBe("replaced")
+					expect(doc.items).toEqual([])
+					// the store is still live after the reconcile: a later
+					// in-scope change keeps flowing through fine-grained
+					handle.change(d => d.projects[0].items.push({title: "fresh"}))
+				} else if (run == 3) {
+					expect(doc.items).toEqual([{title: "fresh"}])
+					done()
+				}
+				return run + 1
+			})
+		}, owner!)
+		return done
+	})
 })
 
 interface ExampleDoc {

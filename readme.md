@@ -1,18 +1,3 @@
-> [!important]
-> omg
-
-> [!caution]
-> This is now situated warm and cozy as part of the Automerge Repo monorepo:
->
-> [@automerge/automerge-repo-solid-primitives](https://github.com/automerge/automerge-repo/tree/main/packages/automerge-repo-solid-primitives)
-
-> [!tip]
-> You can `pnpm add solid-automerge@npm:@automerge/automerge-repo-solid-primitives` and
-> carry on like nothing happened.
-
-> [!important]
-> 🎉 omg 🎉
-
 # Solid Automerge
 
 <a href="https://www.solidjs.com/"> <img alt="" src=.assets/solid.png width=22
@@ -90,6 +75,60 @@ const doc = makeDocumentProjection<{items: {title: string}[]}>(handle)
 
 // subscribes fine-grained to doc.items[1].title
 return <h1>{doc.items[1].title}</h1>
+```
+
+## useDocSignal
+
+A light coarse-grained primitive when you care only _that_ a doc has changed,
+and not _how_. Returns `[doc, handle]`.
+
+```ts
+useDocSignal<T>(
+    () => AutomergeURL,
+    options?: {repo: Repo}
+): [Accessor<Doc<T>>, Resource<DocHandle<T>>]
+```
+
+```tsx
+// example
+const [url, setURL] = createSignal<AutomergeUrl>(props.url)
+const [doc, handle] = useDocSignal(url, {repo})
+
+const inc = () => handle()?.change(d => d.count++)
+return <button onclick={inc}>{doc()?.count}</button>
+```
+
+The `{repo}` option can be left out if you are using [RepoContext](#repocontext).
+
+## createDocSignal
+
+A light coarse-grained primitive when you care only _that_ a doc has changed,
+and not _how_. Takes a signal `DocHandle`.
+
+Underlying primitive for [`useDocSignal`](#usedocsignal).
+
+Works with [`useDocHandle`](#usedochandle).
+
+```ts
+createDocSignal<T>(() => DocHandle<T>): Accessor<Doc<T>>
+```
+
+## makeDocSignal
+
+Just like `createDocSignal`, but without a reactive input.
+
+Underlying primitive for [`createDocSignal`](#createdocsignal).
+
+```ts
+makeDocSignal<T>(handle: DocHandle<T>): Accessor<Doc<T>>
+```
+
+```tsx
+// example
+const handle = repo.find(url)
+const doc = makeDocSignal<{count: number}>(handle)
+
+return <span>{doc()?.count}</span>
 ```
 
 ## useDocHandle

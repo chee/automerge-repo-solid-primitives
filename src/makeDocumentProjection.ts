@@ -21,7 +21,7 @@ const cache = new WeakMap<
  * @param handle an Automerge
  * [DocHandle](https://automerge.org/automerge-repo/classes/_automerge_automerge_repo.DocHandle.html)
  */
-export default function makeDocumentProjection<T>(
+export default function makeDocumentProjection<T extends object>(
 	handle: DocHandle<T>
 ): Doc<T> {
 	onCleanup(() => {
@@ -38,7 +38,7 @@ export default function makeDocumentProjection<T>(
 		return item.store as Doc<T>
 	}
 
-	const [doc, set] = createStore<Doc<T>>(handle.doc())
+	const [doc, set] = createStore<Doc<T>>(handle.doc()!)
 
 	cache.set(handle, {
 		refs: 0,
@@ -51,6 +51,18 @@ export default function makeDocumentProjection<T>(
 	})
 
 	function patch(payload: DocHandleChangePayload<T>) {
+		// `scopeReplaced` means the change landed at or above this (sub-)handle's
+		// scope boundary, so it can't be expressed as in-scope patches. The
+		// payload still carries `doc` — the new value at the handle's path (the
+		// part of the store this scope points at) — so we reconcile against that
+		// instead of applying patches. `reconcile` structurally diffs it against
+		// the current store, so unchanged subtrees keep their identity and only
+		// the parts that actually changed notify. `doc` is undefined when the
+		// scope was removed entirely.
+		if (payload.scopeReplaced) {
+			set(reconcile((payload.doc ?? {}) as Doc<T>))
+			return
+		}
 		set(produce(autoproduce(payload)))
 	}
 
@@ -62,7 +74,7 @@ export default function makeDocumentProjection<T>(
 	handle.on("delete", ondelete)
 
 	handle.whenReady().then(() => {
-		set(handle.doc())
+		set(handle.doc()!)
 	})
 
 	return doc

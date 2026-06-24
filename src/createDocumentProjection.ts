@@ -9,7 +9,7 @@ import {access} from "@solid-primitives/utils"
  * @param handle an accessor (signal/resource) of a
  * [DocHandle](https://automerge.org/automerge-repo/classes/_automerge_automerge_repo.DocHandle.html)
  */
-export default function createDocumentProjection<T>(
+export default function createDocumentProjection<T extends object>(
 	handle: Accessor<DocHandle<T> | undefined>
 ): Accessor<Doc<T> | undefined> {
 	const projection = createMemo<Doc<T> | undefined>(
