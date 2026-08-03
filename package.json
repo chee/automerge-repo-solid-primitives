@@ -62,7 +62,7 @@
 	},
 	"dependencies": {
 		"@solid-primitives/utils": "^6.4.0",
-		"cabbages": "^0.2.9"
+		"cabbages": "^0.2.10"
 	},
 	"repository": {
 		"type": "git",
